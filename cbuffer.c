@@ -116,6 +116,28 @@ uint32_t cb_read(cbuffer_t *cb, void *buf, uint32_t nbytes)
     return bytes_read;
 }
 
+uint32_t cb_write(cbuffer_t *cb, void *buf, uint32_t nbytes) 
+{
+    if (!cb->active) 
+        return 1;
+
+    uint32_t bytes_written = 0;
+    for (uint32_t i = 0; i < nbytes; i++) 
+    {
+        uint32_t next = (cb->writer + 1) % cb->size;
+        if (next == cb->reader) 
+        {
+            printf("\nOverflow\n");
+            cb->overflow++;
+            break;
+        }
+        cb->data[cb->writer] = ((uint8_t *)buf)[i];
+        cb->writer = next;
+        bytes_written = bytes_written + 1;
+    }
+    return bytes_written;
+}
+
 /* ----------------------------------------------- */
 
 
