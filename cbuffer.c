@@ -138,6 +138,14 @@ uint32_t cb_write(cbuffer_t *cb, void *buf, uint32_t nbytes)
     return bytes_written;
 }
 
+uint32_t cb_data_count(cbuffer_t *cb) 
+{
+    if (cb->writer >= cb->reader) 
+        return cb->writer - cb->reader;
+    else 
+        return cb->size - (cb->reader - cb->writer);
+}
+
 /* ----------------------------------------------- */
 
 
