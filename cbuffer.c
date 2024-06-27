@@ -95,6 +95,27 @@ void cb_clear(cbuffer_t *cb)
     cb->overflow = 0;
 }
 
+uint32_t cb_read(cbuffer_t *cb, void *buf, uint32_t nbytes) 
+{
+    if (!cb->active) 
+        return 1;
+
+    uint32_t bytes_read = 0;
+    for (uint32_t i = 0; i < nbytes; i++) 
+    {
+        if (cb->reader == cb->writer) 
+        {
+            printf("\nEmpty\n");
+            break; // Empty 
+        }
+        ((uint8_t *)buf)[i] = cb->data[cb->reader];
+        cb->data[cb->reader] = 0;
+        cb->reader = (cb->reader + 1) % cb->size;
+        bytes_read = bytes_read + 1;
+    }
+    return bytes_read;
+}
+
 /* ----------------------------------------------- */
 
 
